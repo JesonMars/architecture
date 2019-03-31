@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-4.3.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+
+    <!--1 引入属性文件，在配置中占位使用 -->
+    <context:property-placeholder location="classpath*:conf/env/jdbc.properties" />
+
+    <!--&lt;!&ndash;2 配置数据源 &ndash;&gt;-->
+    <!--<bean id="datasource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">-->
+        <!--&lt;!&ndash;驱动类名 &ndash;&gt;-->
+        <!--<property name="driverClassName" value="${jdbc.driver}" />-->
+        <!--&lt;!&ndash; url &ndash;&gt;-->
+        <!--<property name="url" value="${jdbc.url}" />-->
+        <!--&lt;!&ndash; 用户名 &ndash;&gt;-->
+        <!--<property name="username" value="${jdbc.uid}" />-->
+        <!--&lt;!&ndash; 密码 &ndash;&gt;-->
+        <!--<property name="password" value="${jdbc.pwd}" />-->
+    <!--</bean>-->
+    <!--&lt;!&ndash;3 会话工厂bean sqlSessionFactoryBean &ndash;&gt;-->
+    <!--<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">-->
+        <!--&lt;!&ndash; 数据源 &ndash;&gt;-->
+        <!--<property name="dataSource" ref="datasource"></property>-->
+        <!--<property name="typeAliasesPackage" value="com.jesse.modules"/>-->
+        <!--&lt;!&ndash; sql映射文件路径 &ndash;&gt;-->
+        <!--<property name="mapperLocations" value="classpath*:mybatis/modules/**/reader/*Mapper.xml"></property>-->
+    <!--</bean>-->
+    <!--&lt;!&ndash;4 自动扫描对象关系映射 &ndash;&gt;-->
+    <!--<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">-->
+        <!--&lt;!&ndash;指定会话工厂，如果当前上下文中只定义了一个则该属性可省去 &ndash;&gt;-->
+        <!--<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>-->
+        <!--&lt;!&ndash; 指定要自动扫描接口的基础包，实现接口 &ndash;&gt;-->
+        <!--<property name="basePackage" value="com.jesse.modules"></property>-->
+    <!--</bean>-->
+
+
+    <!--<bean id="writerdatasource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">-->
+        <!--<property name="driverClassName" value="${jdbc.writer.driver}"/>-->
+        <!--<property name="url" value="${jdbc.writer.url}"/>-->
+        <!--<property name="username" value="${jdbc.writer.uid}"/>-->
+        <!--<property name="password" value="${jdbc.writer.pwd}"/>-->
+    <!--</bean>-->
+    <!--<bean id="writerSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">-->
+        <!--<property name="dataSource" ref="writerdatasource"/>-->
+        <!--<property name="typeAliasesPackage" value="com.jesse.modules"/>-->
+        <!--<property name="mapperLocations" value="classpath*:mybatis/modules/test/writer/*Mapper.xml"/>-->
+    <!--</bean>-->
+    <!--<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">-->
+        <!--<property name="sqlSessionFactoryBeanName" value="writerSqlSessionFactory"/>-->
+        <!--<property name="basePackage" value="com.jesse.modules"/>-->
+    <!--</bean>-->
+    <!--&lt;!&ndash;5 声明式事务管理 &ndash;&gt;-->
+    <!--&lt;!&ndash;定义事物管理器，由spring管理事务 &ndash;&gt;-->
+    <!--<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">-->
+        <!--<property name="dataSource" ref="writerdatasource"></property>-->
+    <!--</bean>-->
+    <!--&lt;!&ndash;支持注解驱动的事务管理，指定事务管理器 &ndash;&gt;-->
+    <!--<tx:annotation-driven transaction-manager="transactionManager"/>-->
+
+    <!--&lt;!&ndash;6 容器自动扫描IOC组件  &ndash;&gt;-->
+    <!--<context:component-scan base-package="com.jesse.modules.**"></context:component-scan>-->
+
+    <!--&lt;!&ndash;7 aspectj支持自动代理实现AOP功能 &ndash;&gt;-->
+    <!--<aop:aspectj-autoproxy proxy-target-class="true"></aop:aspectj-autoproxy>-->
+
+    <bean id="readerDataSource" class="com.alibaba.druid.pool.DruidDataSource">
+        <property name="name" value="readDataSource"/>
+        <property name="driverClassName" value="${jdbc.driver}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.uid}"/>
+        <property name="password" value="${jdbc.pwd}"/>
+        <!-- 最大并发连接数 -->
+        <property name="maxActive" value="50" />
+        <!-- 初始化连接数量 -->
+        <property name="initialSize" value="10" />
+        <!-- 最小空闲连接数 -->
+        <property name="minIdle" value="2" />
+        <!-- 连接Idle一个小时后超时 -->
+        <!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+        <property name="timeBetweenEvictionRunsMillis" value="60000" />
+        <property name="minEvictableIdleTimeMillis" value="600000" />
+
+        <!-- DataSource Druid配置 -->
+        <property name="validationQuery" value="SELECT SYSDATE() FROM DUAL" />
+        <property name="testWhileIdle" value="true" />
+        <property name="poolPreparedStatements" value="true" />
+        <!-- 打开PSCache，并且指定每个连接上PSCache的大小 -->
+        <property name="maxPoolPreparedStatementPerConnectionSize" value="20" />
+        <property name="filters" value="stat,config" />
+        <!-- 开启druid监控支持(stat)，SQL防火墙(wall)以及SQL合并(mergeStat) -->
+        <property name="connectionProperties" value="druid.stat.slowSqlMillis=2000;config.decrypt=false" /><!-- 慢SQL标准 -->
+        <property name="removeAbandoned" value="true" /><!-- 打开removeAbandoned功能 -->
+        <property name="removeAbandonedTimeout" value="1800" /><!-- 1800秒，也就是30分钟 -->
+        <property name="logAbandoned" value="true" /><!-- 关闭abanded连接时输出错误日志 -->
+
+    </bean>
+    <bean id="writerDataSource" class="com.alibaba.druid.pool.DruidDataSource">
+        <property name="name" value="writerDataSource"/>
+        <property name="driverClassName" value="${jdbc.writer.driver}"/>
+        <property name="url" value="${jdbc.writer.url}"/>
+        <property name="username" value="${jdbc.writer.uid}"/>
+        <property name="password" value="${jdbc.writer.pwd}"/>
+        <!-- 最大并发连接数 -->
+        <property name="maxActive" value="50" />
+        <!-- 初始化连接数量 -->
+        <property name="initialSize" value="10" />
+        <!-- 最小空闲连接数 -->
+        <property name="minIdle" value="2" />
+        <!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+        <property name="timeBetweenEvictionRunsMillis" value="60000" />
+        <property name="minEvictableIdleTimeMillis" value="600000" />
+
+        <!-- DataSource Druid配置 -->
+        <property name="validationQuery" value="SELECT SYSDATE() FROM DUAL" />
+        <property name="testWhileIdle" value="true" />
+        <property name="poolPreparedStatements" value="true" />
+        <!-- 打开PSCache，并且指定每个连接上PSCache的大小 -->
+        <property name="maxPoolPreparedStatementPerConnectionSize" value="20" />
+        <property name="filters" value="stat,config" />
+        <!-- 开启druid监控支持(stat)，SQL防火墙(wall)以及SQL合并(mergeStat) -->
+        <property name="connectionProperties" value="druid.stat.slowSqlMillis=2000;config.decrypt=false" /><!-- 慢SQL标准 -->
+        <property name="removeAbandoned" value="true" /><!-- 打开removeAbandoned功能 -->
+        <property name="removeAbandonedTimeout" value="1800" /><!-- 1800秒，也就是30分钟 -->
+        <property name="logAbandoned" value="true" /><!-- 关闭abanded连接时输出错误日志 -->
+    </bean>
+
+    <bean id="readerSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="readerDataSource"/>
+        <property name="mapperLocations" value="classpath*:mybatis/modules/**/reader/*Mapper.xml"/>
+        <property name="configLocation" value="classpath:core/mybatisconfig.xml"/>
+    </bean>
+    <bean id="writerSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="writerDataSource"/>
+        <property name="mapperLocations" value="classpath*:mybatis/modules/**/writer/*Mapper.xml"/>
+        <property name="configLocation" value="classpath:core/mybatisconfig.xml"/>
+    </bean>
+
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="sqlSessionFactoryBeanName" value="writerSqlSessionFactory"/>
+        <property name="basePackage" value="com.jesse.modules.test.dao.IDaoWriter"/>
+    </bean>
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="sqlSessionFactoryBeanName" value="readerSqlSessionFactory"/>
+        <property name="basePackage" value="com.jesse.modules.test.dao.IDaoReader"/>
+    </bean>
+
+    <!-- 配置事务管理器 -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="writerDataSource" />
+    </bean>
+    <tx:advice id="transactionAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <!--<tx:method name="fetchOrders" propagation="REQUIRED" read-only="false" rollback-for="java.lang.Exception"/>-->
+            <!--<tx:method name="update*" propagation="SUPPORTS" read-only="false"  rollback-for="java.lang.Exception"/>-->
+            <!--<tx:method name="*" propagation="REQUIRED" />-->
+            <tx:method name="find*" read-only="true" propagation="REQUIRED"/>
+            <tx:method name="create*" rollback-for="Exception" propagation="REQUIRED" />
+            <tx:method name="save*" rollback-for="Exception" propagation="REQUIRED" />
+            <tx:method name="insert*" rollback-for="Exception" propagation="REQUIRED" />
+            <tx:method name="update*" rollback-for="Exception" propagation="REQUIRED" />
+            <tx:method name="delete*" rollback-for="Exception" propagation="REQUIRED" />
+        </tx:attributes>
+    </tx:advice>
+    <aop:config>
+        <aop:pointcut id="transactionPointcut" expression="execution(* com.jesse.modules.*.service.*Service.*(..))" />
+        <aop:advisor pointcut-ref="transactionPointcut" advice-ref="transactionAdvice" />
+    </aop:config>
+
+    <!-- Druid AOP配置 -->
+    <bean id="druid-stat-interceptor" class="com.alibaba.druid.support.spring.stat.DruidStatInterceptor"> </bean>
+    <bean id="druid-stat-pointcut" class="org.springframework.aop.support.JdkRegexpMethodPointcut" scope="prototype">
+        <property name="patterns">
+            <list> <value>com.jesse.modules.test.dao.*</value> </list>
+        </property>
+    </bean>
+    <!-- 打开监控 -->
+    <aop:config>
+        <aop:advisor advice-ref="druid-stat-interceptor" pointcut-ref="druid-stat-pointcut" />
+    </aop:config>
+
+    <!--6 容器自动扫描IOC组件  -->
+    <context:component-scan base-package="com.jesse.modules.**"></context:component-scan>
+
+    <!--7 aspectj支持自动代理实现AOP功能 -->
+    <aop:aspectj-autoproxy proxy-target-class="true"></aop:aspectj-autoproxy>
+
+
+</beans>

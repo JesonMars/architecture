@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jesse.modules.test.dao.IDaoReader.ITestReader">
+
+    <resultMap id="BaseResultMap" type="com.jesse.modules.test.TestModel">
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="store" property="store" jdbcType="INTEGER" />
+        <result column="utime" property="utime" jdbcType="TIMESTAMP"/>
+        <result column="ctime" property="ctime" jdbcType="TIMESTAMP" />
+        <result column="sex" property="sex" typeHandler="org.apache.ibatis.type.EnumTypeHandler"/>
+        <result column="is_enable" property="isEnable" javaType="com.jesse.modules.test.enums.EnableEnum"/>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, name,store,utime,ctime,sex,is_enable
+    </sql>
+
+    <sql id="tableName">product</sql>
+    <sql id="where">
+        <where>
+            <if test="id!=null and id!=0">
+                id=#{id}
+            </if>
+            <if test="name!=null">
+                and name=#{name}
+            </if>
+            <if test="store!=null and store!=0">
+                and store=#{store}
+            </if>
+            <if test="utime !=null">
+                and ctime=#{ctime}
+            </if>
+        </where>
+    </sql>
+    <sql id="whereTrim">
+        <trim prefix="where" prefixOverrides="and | or">
+            <if test="id!=null and id!=0">
+                id=#{id}
+            </if>
+            <if test="name!=null and name!=''">
+                and name=#{name}
+            </if>
+            <if test="store!=null and store!=0">
+                and store=#{store}
+            </if>
+            <if test="utime !=null">
+                and ctime=#{ctime}
+            </if>
+        </trim>
+    </sql>
+    <select id="getById" parameterType="com.jesse.modules.test.TestModel" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="tableName"/>
+        <include refid="where"/>
+    </select>
+    <select id="getAll" resultMap="BaseResultMap"  >
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM users
+    </select>
+
+    <select id="getOne" parameterType="java.lang.Long" resultMap="BaseResultMap" >
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM product
+        WHERE id = #{id}
+    </select>
+</mapper>
